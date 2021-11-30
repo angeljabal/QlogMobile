@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    tools:context=".ScanQR">
+
+    <include
+        android:id="@+id/toolbarMain"
+        layout="@layout/toolbar"/>
+
+<!--    <Button-->
+<!--        android:id="@+id/scanBtn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_centerInParent="true"-->
+<!--        android:background="@color/teal_400"-->
+<!--        android:padding="15dp"-->
+<!--        android:text="Scan QR"-->
+<!--        android:textSize="30sp"-->
+<!--        android:textColor="@color/white"/>-->
+
+    <LinearLayout
+        android:id="@+id/walk"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginVertical="20dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/scan_qr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/secondary_btn"
+            android:drawableRight="@drawable/ic_baseline_qr_code_scanner_24"
+            android:paddingHorizontal="40dp"
+            android:paddingVertical="20dp"
+            android:text="Scan QR"
+            android:textAlignment="textStart"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/find_by_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/secondary_btn"
+            android:drawableRight="@drawable/ic_baseline_person_search_24"
+            android:paddingHorizontal="40dp"
+            android:paddingVertical="20dp"
+            android:text="Find by Name"
+            android:textAlignment="textStart"
+            android:textColor="@color/white"/>
+
+    </LinearLayout>
+</RelativeLayout>

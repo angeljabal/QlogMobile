@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_200"
+    tools:context=".TicketActivity"
+    android:id="@id/ticketView">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbarMain"
+            layout="@layout/toolbar" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/ticketView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbarMain"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="20sp"
+            android:layout_marginVertical="10sp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="25dp"
+            app:cardElevation="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="15sp">
+
+                <RelativeLayout
+                    android:id="@+id/line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10sp">
+
+                    <TextView
+                        android:id="@+id/tvText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="10sp"
+                        android:layout_marginRight="10sp"
+                        android:text="TICKET NO."
+                        android:textColor="@color/cyan_700" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2sp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="16sp"
+                        android:layout_toStartOf="@id/tvText"
+                        android:background="@color/yellow_500" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2sp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="16sp"
+                        android:layout_toEndOf="@id/tvText"
+                        android:background="@color/yellow_500" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/queueNumberText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/line"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="20sp"
+                    android:layout_marginTop="20sp"
+                    android:layout_marginEnd="20sp"
+                    android:layout_marginBottom="20sp"
+                    android:text="###"
+                    android:textColor="@color/gray_700"
+                    android:textSize="70sp" />
+
+                <View
+                    android:id="@id/line1"
+                    android:layout_width="match_parent"
+                    android:layout_height="2sp"
+                    android:layout_below="@+id/queueNumberText"
+                    android:layout_centerVertical="true"
+                    android:layout_marginHorizontal="16sp"
+                    android:layout_marginVertical="20sp"
+                    android:background="@color/yellow_500" />
+
+                <TextView
+                    android:id="@+id/facilityText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/line1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20sp"
+                    android:text="(Facility Name)"
+                    android:textColor="@color/gray_700"
+                    android:textSize="20sp" />
+
+                <RelativeLayout
+                    android:id="@+id/nameLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/facilityText"
+                    android:layout_marginHorizontal="20sp"
+                    android:layout_marginVertical="10sp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Full Name:"
+                            android:textColor="@color/yellow_500"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/nameText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#000000"
+                            android:textSize="20sp" />
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/purposeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/nameLayout"
+                    android:layout_marginHorizontal="20sp"
+                    android:layout_marginVertical="10sp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Purpose:"
+                            android:textColor="@color/yellow_500"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/purposeText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#000000"
+                            android:textSize="20sp" />
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ticketView"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:padding="20sp">
+
+            <Button
+                android:id="@+id/done_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="0.33"
+                android:background="@color/teal_400"
+                android:text="DONE"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</ScrollView>

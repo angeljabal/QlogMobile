@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FacilityActivity">
+
+    <include
+        android:id="@+id/toolbarMain"
+        layout="@layout/toolbar" />
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        app:srcCompat="@drawable/logo" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|center_horizontal"
+        android:padding="16sp">
+
+        <TextView
+            android:id="@id/facilityLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12sp"
+            android:text="Facilities:"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/facilityText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/facilityLabel"
+            android:layout_marginBottom="20sp"
+            android:background="@android:drawable/editbox_background"
+            android:backgroundTint="#11000000"
+            android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
+            android:gravity="center_vertical"
+            android:hint="Select Facility"
+            android:padding="12sp" />
+
+        <TextView
+            android:id="@id/othersLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12sp"
+            android:layout_below="@id/facilityText"
+            android:text="Others:"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/othersText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/othersLabel"
+            android:layout_marginBottom="20sp"
+            android:background="@android:drawable/editbox_background"
+            android:backgroundTint="#11000000"
+            android:gravity="center_vertical"
+            android:hint="Please state"
+            android:padding="12sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:layout_alignParentRight="true"
+        android:padding="20sp">
+
+        <Button
+            android:id="@+id/next_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="0.33"
+            android:background="@color/teal_400"
+            android:layout_alignParentRight="true"
+            android:text="Next"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+</RelativeLayout>

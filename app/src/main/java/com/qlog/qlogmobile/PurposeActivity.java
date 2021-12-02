@@ -1,11 +1,9 @@
 package com.qlog.qlogmobile;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -13,22 +11,31 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.qlog.qlogmobile.adapters.MultiAdapter;
+import com.qlog.qlogmobile.adapters.SelectedAdapter;
 import com.qlog.qlogmobile.constants.Constant;
+import com.qlog.qlogmobile.model.Purpose;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,14 +45,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PurposeActivity extends AppCompatActivity {
+public class PurposeActivity extends AppCompatActivity implements MyInterface {
     private Toolbar toolbar;
-    public static ArrayList<String> purposeList;
-    public static String[] facilitiesList = {"Registrar", "Cashier"};
+    private ArrayList<Purpose> purposes, selectedList;
     private SharedPreferences userPref, logPref;
-    private TextView purposeText, othersText, othersLabel;
+    private TextView purposeText;
     private Dialog purposeDialog;
-    private Button nextBtn;
+    private Button clear_btn, others_btn;
+    private FloatingActionButton done_btn;
+    private RecyclerView selected_rv, purposes_rv;
+    public SelectedAdapter selectedAdapter;
+    public MultiAdapter multiAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,32 +65,168 @@ public class PurposeActivity extends AppCompatActivity {
         setToolBar();
     }
 
-    private void init(){
+    private void init() {
         userPref = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
-        logPref = this.getApplicationContext().getSharedPreferences("log",Context.MODE_PRIVATE);
+        logPref = this.getApplicationContext().getSharedPreferences("log", Context.MODE_PRIVATE);
         SharedPreferences.Editor logEditor = logPref.edit();
 
-        purposeList = new ArrayList<>();
+        purposes = new ArrayList<>();
+        selectedList = new ArrayList<>();
         purposeText = findViewById(R.id.purposeText);
-        othersText = findViewById(R.id.othersText);
-        othersLabel = findViewById(R.id.othersLabel);
-        othersText.setVisibility(View.INVISIBLE);
-        othersLabel.setVisibility(View.INVISIBLE);
 
-        nextBtn = findViewById(R.id.next_btn);
+        done_btn = findViewById(R.id.done_btn);
 
+        purposeDialog = new Dialog(PurposeActivity.this);
+        selected_rv = (RecyclerView) findViewById(R.id.selectedPurposesRecyclerView);
+
+        createListofData();
+        purposeText.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                showPurposeDialog();
+            }
+        });
+
+        done_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                for(int i=0; i<selectedList.size(); i++){
+                    stringBuilder.append(selectedList.get(i).getTitle());
+
+                    if (i != selectedList.size() - 1) {
+                        stringBuilder.append(",");
+                    }
+                }
+
+                logEditor.putString("purposes", stringBuilder.toString());
+                logEditor.apply();
+                startActivity(new Intent(PurposeActivity.this, FacilityActivity.class));
+            }
+        });
+    }
+
+    private void showPurposeDialog() {
+        purposeDialog.setContentView(R.layout.purpose_searchable_spinner);
+        purposeDialog.getWindow().setLayout(1000, 1200);
+        purposeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        purposeDialog.show();
+
+//        doneBtn = purposeDialog.findViewById(R.id.done_btn);
+        EditText editPurpose = purposeDialog.findViewById(R.id.edit_purpose);
+        purposes_rv = purposeDialog.findViewById(R.id.purposes_rv);
+        LinearLayoutManager purposes_layoutManager = new LinearLayoutManager(PurposeActivity.this);
+        purposes_rv.setLayoutManager(purposes_layoutManager);
+        purposes_rv.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
+
+        others_btn = purposeDialog.findViewById(R.id.others_btn);
+        clear_btn = purposeDialog.findViewById(R.id.clear_btn);
+
+        others_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showOthersDialogInput();
+                purposeDialog.dismiss();
+            }
+        });
+
+        clear_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearSelected();
+            }
+        });
+
+        multiAdapter = new MultiAdapter(purposes, this);
+        purposes_rv.setAdapter(multiAdapter);
+
+
+        editPurpose.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                multiAdapter.getFilter().filter(charSequence);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        editPurpose.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if(i==keyEvent.KEYCODE_ENTER){
+                    editPurpose.setText("");
+                    purposeDialog.dismiss();
+                }
+                return false;
+            }
+        });
+    }
+
+    private void showOthersDialogInput() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(PurposeActivity.this);
+        alertDialog.setTitle("Others:");
+        final EditText input = new EditText(PurposeActivity.this);
+
+        input.setHint("Please state other purpose...");
+        input.setSingleLine(true);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+
+        input.setLayoutParams(lp);
+        alertDialog.setView(input);
+
+        alertDialog.setPositiveButton("Add",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (!input.getText().toString().isEmpty()) {
+                            purposes.add(new Purpose(input.getText().toString(), true));
+                            getSelected();
+                            dialog.dismiss();
+                        } else {
+                            Toast.makeText(PurposeActivity.this, "Others field is empty", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+        alertDialog.setNeutralButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.show();
+    }
+
+    private void clearSelected() {
+        for (Purpose purpose : purposes) {
+            purpose.setSelected(false);
+            getSelected();
+            purposeDialog.dismiss();
+        }
+    }
+
+    private void createListofData() {
         //PURPOSES REQUEST
         StringRequest purposesRequest = new StringRequest(Request.Method.GET, Constant.PURPOSES, response -> {
             try {
                 JSONObject object = new JSONObject(response);
                 if (object.getBoolean("success")) {
                     JSONArray array = new JSONArray(object.getString("purposes"));
-                    facilitiesList = new String[array.length()];
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject purposeObject = array.getJSONObject(i);
-                        purposeList.add(purposeObject.getString("title"));
+                        Purpose purpose = new Purpose(purposeObject.getString("title"), false);
+
+                        purposes.add(purpose);
                     }
-                    purposeList.add("Others");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -100,73 +246,18 @@ public class PurposeActivity extends AppCompatActivity {
 
         RequestQueue purposeQueue = Volley.newRequestQueue(this);
         purposeQueue.add(purposesRequest);
+    }
 
-        purposeText.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void getSelected() {
 
-            @Override
-            public void onClick(View view) {
-                purposeDialog = new Dialog(PurposeActivity.this);
-                purposeDialog.setContentView(R.layout.purpose_searchable_spinner);
-                purposeDialog.getWindow().setLayout(800, 800);
-                purposeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                purposeDialog.show();
+        selectedList = multiAdapter.getSelected();
 
-                EditText editPurpose = purposeDialog.findViewById(R.id.edit_purpose);
-                ListView purposeListView = purposeDialog.findViewById(R.id.purpose_list);
-
-                ArrayAdapter<String> purposeAdapter = new ArrayAdapter<>(PurposeActivity.this, android.R.layout.simple_spinner_dropdown_item, purposeList);
-
-                purposeListView.setAdapter(purposeAdapter);
-
-                editPurpose.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        purposeAdapter.getFilter().filter(charSequence);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-
-                    }
-                });
-
-                purposeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        if(purposeAdapter.getItem(i)=="Others"){
-                            purposeText.setText(purposeAdapter.getItem(i));
-                            othersText.setVisibility(View.VISIBLE);
-                            othersLabel.setVisibility(View.VISIBLE);
-                            if(!othersText.getText().toString().isEmpty()){
-                                logEditor.putString("purpose", othersText.getText().toString());
-                                logEditor.apply();
-                                nextBtn.setEnabled(true);
-                            }
-                        }else{
-                            purposeText.setText(purposeAdapter.getItem(i));
-                            othersText.setVisibility(View.INVISIBLE);
-                            othersLabel.setVisibility(View.INVISIBLE);
-                            logEditor.putString("purpose", String.valueOf(purposeText.getText()));
-                            logEditor.apply();
-                            nextBtn.setEnabled(true);
-                        }
-                        purposeDialog.dismiss();
-                    }
-                });
-            }
-        });
-
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(PurposeActivity.this, FacilityActivity.class));
-            }
-        });
+        selectedAdapter = new SelectedAdapter(selectedList, PurposeActivity.this);
+        LinearLayoutManager selected_layoutManager = new LinearLayoutManager(PurposeActivity.this);
+        selected_rv.setLayoutManager(selected_layoutManager);
+        selected_rv.setAdapter(selectedAdapter);
+        selectedAdapter.notifyDataSetChanged();
     }
 
     private void setToolBar() {
@@ -179,4 +270,5 @@ public class PurposeActivity extends AppCompatActivity {
         search.setVisibility(View.INVISIBLE);
         back.setOnClickListener(v -> onBackPressed());
     }
+
 }

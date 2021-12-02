@@ -12,7 +12,7 @@
         />
 
     <corners
-        android:radius="5sp"
+        android:radius="15sp"
     />
 
 

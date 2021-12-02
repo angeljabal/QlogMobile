@@ -9,5 +9,6 @@ public class Constant {
     public static final String SHOW_LOG = HOME+"/logs";
     public static final String PURPOSES = HOME+"/purposes";
     public static final String FACILITIES = HOME+"/facilities";
-    public static final String USERS = HOME+"/users/find";
+    public static final String USERS = HOME+"/users";
+    public static final String FIND_USER = HOME+"/users/find";
 }

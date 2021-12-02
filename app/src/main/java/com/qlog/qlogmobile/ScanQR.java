@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -51,7 +52,7 @@ public class ScanQR extends AppCompatActivity implements View.OnClickListener {
     private Button scanBtn, findBtn;
     Toolbar toolbar;
     private Dialog usersDialog;
-    public static ArrayList<User> userList;
+    public static ArrayList<String> usersList;
     private SharedPreferences userPref, logPref;
     private SharedPreferences.Editor logEditor;
 
@@ -119,43 +120,45 @@ public class ScanQR extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void findUser() {
-        userList = new ArrayList<>();
+        usersList = new ArrayList<>();
 
         usersDialog = new Dialog(ScanQR.this);
         usersDialog.setContentView(R.layout.search_user_dialog);
-        usersDialog.getWindow().setLayout(800, 800);
+        usersDialog.getWindow().setLayout(1000, 900);
         usersDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         usersDialog.show();
 
         EditText editUser = usersDialog.findViewById(R.id.edit_user);
         Button findBtn = usersDialog.findViewById(R.id.find_button);
+
+        ListView userListView = usersDialog.findViewById(R.id.users_list);
+        ArrayAdapter<String> usersAdapter = new ArrayAdapter<String>(ScanQR.this, android.R.layout.simple_spinner_dropdown_item, usersList);
+        userListView.setAdapter(usersAdapter);
+
         findBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                StringRequest purposesRequest = new StringRequest(Request.Method.POST, Constant.USERS, response -> {
+                StringRequest usersRequest = new StringRequest(Request.Method.POST, Constant.USERS, response -> {
                     try {
                         JSONObject object = new JSONObject(response);
                         if (object.getBoolean("success")) {
-                            JSONObject userObj = object.getJSONObject("user");
-                            JSONObject profileObj = userObj.getJSONObject("profile");
-                            logEditor.putString("user_id", userObj.getString("id"));
-                            logEditor.putString("name", userObj.getString("name"));
-                            logEditor.putString("address", profileObj.getString("address"));
-                            logEditor.putString("phone_number", profileObj.getString("phone_number"));
-                            logEditor.apply();
-
-                            startActivity(new Intent(ScanQR.this, ConfirmDataActivity.class));
+                            JSONArray array = new JSONArray(object.getString("users"));
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject usersObject = array.getJSONObject(i);
+                                if (!usersList.contains(usersObject.getString("name"))) {
+                                    usersList.add(usersObject.getString("name"));
+                                }
+                            }
                         } else {
-                            Toast.makeText(ScanQR.this, "No Results", Toast.LENGTH_LONG).show();
+                            Toast.makeText(ScanQR.this, "No Results", Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(ScanQR.this, "No results found. Please try again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ScanQR.this, "No results found. Please try again.", Toast.LENGTH_SHORT).show();
                     }
                 }, error -> {
                     error.printStackTrace();
-                    Toast.makeText(ScanQR.this, "No results found. Please try again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ScanQR.this, "No results found. Please try again.", Toast.LENGTH_SHORT).show();
 
                 }) {
                     // provide token in header
@@ -176,11 +179,41 @@ public class ScanQR extends AppCompatActivity implements View.OnClickListener {
 
                 };
 
-                RequestQueue purposeQueue = Volley.newRequestQueue(ScanQR.this);
-                purposeQueue.add(purposesRequest);
+                RequestQueue usersQueue = Volley.newRequestQueue(ScanQR.this);
+                usersQueue.add(usersRequest);
+                usersAdapter.notifyDataSetChanged();
+
+                editUser.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        usersAdapter.getFilter().filter(charSequence);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+
+                userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        String selected = usersAdapter.getItem(i);
+                        logEditor.putString("name", selected);
+                        logEditor.apply();
+                        confirm();
+                        Toast.makeText(ScanQR.this, selected + " selected successfully.", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
+
 
     private void scanCode() {
 
@@ -210,7 +243,7 @@ public class ScanQR extends AppCompatActivity implements View.OnClickListener {
                     logEditor.putString("phone_number", results.getString("phone_number"));
                     logEditor.apply();
 
-                    startActivity(new Intent(ScanQR.this, ConfirmDataActivity.class));
+                    confirm();
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(ScanQR.this, "No results found. Please try again.", Toast.LENGTH_LONG).show();
@@ -221,6 +254,14 @@ public class ScanQR extends AppCompatActivity implements View.OnClickListener {
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void confirm(){
+        if(logPref.getString("purpose", null)=="Walk-in"){
+            startActivity(new Intent(ScanQR.this, ConfirmDataActivity.class));
+        }else{
+            startActivity(new Intent(ScanQR.this, PurposeActivity.class));
         }
     }
 

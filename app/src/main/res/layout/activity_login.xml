@@ -21,8 +21,8 @@
             app:srcCompat="@drawable/logo" />
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:id="@+id/emailLayout"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/logo"
@@ -30,17 +30,16 @@
             android:layout_marginTop="40dp"
             android:layout_marginEnd="40dp"
             android:background="#11000000"
-            app:startIconDrawable="@drawable/ic_baseline_person_24"
             android:hint="Email Address"
-            app:errorTextAppearance="@style/ErrorTextAppearance">
+            app:errorTextAppearance="@style/ErrorTextAppearance"
+            app:startIconDrawable="@drawable/ic_baseline_person_24">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/emailField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
                 android:background="@null"
-                />
+                android:inputType="textEmailAddress" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

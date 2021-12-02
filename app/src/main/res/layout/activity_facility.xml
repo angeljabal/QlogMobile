@@ -55,7 +55,7 @@
             android:text="Others:"
             android:textStyle="bold" />
 
-        <EditText
+        <TextView
             android:id="@+id/othersText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,9 +63,28 @@
             android:layout_marginBottom="20sp"
             android:background="@android:drawable/editbox_background"
             android:backgroundTint="#11000000"
+            android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
             android:gravity="center_vertical"
-            android:hint="Please state"
+            android:hint="Select Facility"
             android:padding="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:id="@+id/unavaibleLabel"
+            android:layout_below="@id/othersText"
+            android:text="Unavailabe Facilities:"
+            android:textColor="@color/red_900"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:id="@+id/unavailableText"
+            android:layout_below="@id/unavaibleLabel"
+            android:text="Unavailabe Facilities"
+            android:paddingLeft="20sp"/>
 
     </RelativeLayout>
 
@@ -89,5 +108,6 @@
             android:text="Next"
             android:textColor="@android:color/white" />
     </LinearLayout>
+
 
 </RelativeLayout>

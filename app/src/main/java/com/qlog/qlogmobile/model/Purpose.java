@@ -1,15 +1,20 @@
 package com.qlog.qlogmobile.model;
 
 public class Purpose {
-    private int id;
     private String title;
+    private boolean isSelected;
 
-    public int getId() {
-        return id;
+    public Purpose(String title, boolean b) {
+        this.title = title;
+        this.isSelected = b;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public String getTitle() {

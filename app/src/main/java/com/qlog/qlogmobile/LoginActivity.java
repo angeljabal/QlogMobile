@@ -16,8 +16,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.snackbar.Snackbar;
@@ -28,7 +31,6 @@ import com.qlog.qlogmobile.constants.Constant;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,24 +67,21 @@ public class LoginActivity extends AppCompatActivity {
                             if (object.getBoolean("hasPermission")) {
                                 SharedPreferences userPref = this.getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = userPref.edit();
-                                float refresh_time= Calendar.getInstance().getTimeInMillis();
 
                                 editor.putString("token", object.getString("token"));
                                 editor.putBoolean("isLoggedIn", true);
-                                editor.putFloat("resfresh_time", refresh_time);
                                 editor.apply();
 
                                 if (TextUtils.equals(object.getString("facility"), "null")) {
                                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                                    finish();
                                     Toast.makeText(this, "Login Success", Toast.LENGTH_SHORT).show();
                                 } else {
                                     editor.putString("facility", object.getString("facility"));
                                     editor.apply();
                                     startActivity(new Intent(LoginActivity.this, ScanQR.class));
-                                    finish();
                                     Toast.makeText(this, "Login Success", Toast.LENGTH_SHORT).show();
                                 }
+                                finish();
                             } else {
                                 Snackbar.make(view, "You are not authorized to access this application", Snackbar.LENGTH_LONG).show();
                             }
@@ -93,10 +92,13 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                }, error -> {
-                    dialog.dismiss();
-                    Snackbar.make(view, "These credentials do not match our records.", Snackbar.LENGTH_LONG).show();
-                    error.printStackTrace();
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        dialog.dismiss();
+                        Snackbar.make(view, error.toString(), Snackbar.LENGTH_LONG).show();
+                        error.printStackTrace();
+                    }
                 }) {
                     protected Map<String, String> getParams() throws AuthFailureError {
                         HashMap<String, String> map = new HashMap<>();
@@ -107,6 +109,10 @@ public class LoginActivity extends AppCompatActivity {
                 };
 
                 RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+                request.setRetryPolicy(new DefaultRetryPolicy(
+                        10000,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 queue.add(request);
             }
         });

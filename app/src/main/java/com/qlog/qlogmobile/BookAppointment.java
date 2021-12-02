@@ -110,11 +110,11 @@ public class BookAppointment extends AppCompatActivity {
                 purposeDialog.show();
 
                 EditText editPurpose = purposeDialog.findViewById(R.id.edit_purpose);
-                ListView purposeListView = purposeDialog.findViewById(R.id.purpose_list);
+//                ListView purposeListView = purposeDialog.findViewById(R.id.purpose_list);
 
                 ArrayAdapter<String> purposeAdapter = new ArrayAdapter<>(BookAppointment.this, android.R.layout.simple_spinner_dropdown_item, purposeList);
 
-                purposeListView.setAdapter(purposeAdapter);
+//                purposeListView.setAdapter(purposeAdapter);
 
                 editPurpose.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -133,14 +133,14 @@ public class BookAppointment extends AppCompatActivity {
                     }
                 });
 
-                purposeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        purposeText.setText(purposeAdapter.getItem(i));
-                        logEditor.putString("purpose", String.valueOf(purposeText.getText()));
-                        purposeDialog.dismiss();
-                    }
-                });
+//                purposeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                        purposeText.setText(purposeAdapter.getItem(i));
+//                        logEditor.putString("purpose", String.valueOf(purposeText.getText()));
+//                        purposeDialog.dismiss();
+//                    }
+//                });
             }
         });
     }

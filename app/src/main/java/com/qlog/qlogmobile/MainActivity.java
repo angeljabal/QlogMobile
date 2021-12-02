@@ -17,45 +17,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+    }
 
-                SharedPreferences userPref = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
-                boolean isLoggedIn = userPref.getBoolean("isLoggedIn", false);
-                String facility = userPref.getString("facility", null);
-                float current_time= Calendar.getInstance().getTimeInMillis();
-                float refresh_time = userPref.getFloat("refresh_time", 0);
-                float newTime=current_time-refresh_time/1000;
-                float bufferTime=100;
+    private void init(){
+        SharedPreferences userPref = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+        boolean isLoggedIn = userPref.getBoolean("isLoggedIn", false);
+        String facility = userPref.getString("facility", null);
 
-                if(newTime<(84000-bufferTime)){
-                    SharedPreferences.Editor editor = userPref.edit();
-                    editor.clear();
-                    editor.apply();
-                    finish();
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    finish();
-                }
-                else{
-                    if (isLoggedIn) {
-                        if (facility==null) {
-                            startActivity(new Intent(MainActivity.this, HomeActivity.class));
-                            finish();
-                        } else {
-                            startActivity(new Intent(MainActivity.this, ScanQR.class));
-                            finish();
-                        }
-                    } else {
-                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    }
-
-                }
+        if (isLoggedIn) {
+            if (facility==null) {
+                startActivity(new Intent(MainActivity.this, HomeActivity.class));
+            } else {
+                startActivity(new Intent(MainActivity.this, ScanQR.class));
             }
-        },1500);
-
+            finish();
+        } else {
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
 
     }
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/selected_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/facilityText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="\u2023 Selected"
+        android:textColor="#000000"
+        android:textSize="12sp" />
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/facilityText"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="\u2022 Purpose"-->
+    <!--        android:layout_marginLeft="20sp"-->
+    <!--        android:textColor="#9CA3AF"-->
+    <!--        android:textSize="15sp" />-->
+
+</LinearLayout>

@@ -27,7 +27,6 @@ import java.util.Map;
 
 
 public class HomeActivity extends AppCompatActivity {
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,32 +42,27 @@ public class HomeActivity extends AppCompatActivity {
         SharedPreferences logPref = this.getApplicationContext().getSharedPreferences("log", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = logPref.edit();
 
-        walkinBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                editor.putString("purpose", "Walk-in");
-                editor.apply();
-                startActivity(new Intent(HomeActivity.this, ScanQR.class));
-            }
+        walkinBtn.setOnClickListener(view -> {
+            editor.putBoolean("isWalkin", true);
+            editor.apply();
+            startActivity(new Intent(HomeActivity.this, ScanQR.class));
         });
 
-        bookAppointmentBtn.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this, ScanQR.class));
-            }
+        bookAppointmentBtn.setOnClickListener(view -> {
+            editor.putBoolean("isWalkin", false);
+            editor.apply();
+            startActivity(new Intent(HomeActivity.this, ScanQR.class));
         });
     }
 
     private void setToolBar(){
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu);
         ImageButton back = toolbar.findViewById(R.id.back);
         ImageButton search = toolbar.findViewById(R.id.right_icon);
         search.setVisibility(View.INVISIBLE);
         back.setVisibility(View.INVISIBLE);
-        toolbar.setOnMenuItemClickListener(menuItem -> onMenuItemClick(menuItem));
+        toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
     }
 
     private boolean onMenuItemClick(MenuItem menuItem) {
@@ -97,9 +91,7 @@ public class HomeActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-        }, error -> {
-            error.printStackTrace();
-        }){
+        }, Throwable::printStackTrace){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 String token = userPref.getString("token","");

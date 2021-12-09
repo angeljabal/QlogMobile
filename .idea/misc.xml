@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/User/AppData/Local/Android/Sdk/platforms/android-31/data/res/drawable/editbox_background.xml" value="0.2703125" />
+        <entry key="..\:/Users/User/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/auto_complete_list.xml" value="0.21510416666666668" />
         <entry key="..\:/Users/User/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_list_item_1.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/drawable-v24/gradient.xml" value="0.23703703703703705" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/drawable-v24/ic_action_user.xml" value="0.23703703703703705" />
@@ -25,7 +27,7 @@
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout-v26/recyclerview_selected.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/activity_auth.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/activity_book_appointment.xml" value="0.264" />
-        <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/activity_confirm_data.xml" value="0.4" />
+        <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/activity_confirm_data.xml" value="0.264" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/activity_facility.xml" value="0.2" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/activity_home.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/activity_login.xml" value="0.25416666666666665" />
@@ -38,18 +40,22 @@
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/activity_tickets.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/checkbox.xml" value="0.24010416666666667" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/custom_list.xml" value="0.25416666666666665" />
+        <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/department_searchable_spinner.xml" value="0.24010416666666667" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/fragment_login.xml" value="0.24010416666666667" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/fragment_purpose.xml" value="0.13020833333333334" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/item_purposes.xml" value="0.25416666666666665" />
+        <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/item_users.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/layout_purposes.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/next_btn.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/purpose_searchable_spinner.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/purposes.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/recycler_footer.xml" value="0.25416666666666665" />
+        <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/recyclerview_facility.xml" value="0.24010416666666667" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/recyclerview_queue.xml" value="0.2" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/recyclerview_ticket.xml" value="0.264" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/rounded_dialog.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/search_user_dialog.xml" value="0.24010416666666667" />
+        <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/searchable_spinner.xml" value="0.25416666666666665" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/toolbar.xml" value="0.264" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/layout/user_searchable_spinner.xml" value="0.24010416666666667" />
         <entry key="..\:/apps/QlogMobile/app/src/main/res/menu/menu.xml" value="0.25416666666666665" />

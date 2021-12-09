@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -63,15 +64,16 @@ public class TicketsActivity extends AppCompatActivity {
 
         logPref = getApplicationContext().getSharedPreferences("log", Context.MODE_PRIVATE);
         logEditor = logPref.edit();
-
+        ProgressDialog dialog = new ProgressDialog(TicketsActivity.this);
+        dialog.setMessage("Processing");
+        dialog.show();
         StringRequest request = new StringRequest(Request.Method.POST, Constant.ADD_LOG, response -> {
             try {
                 JSONObject object = new JSONObject(response);
                 if (object.getBoolean("success")) {
                     JSONArray array = new JSONArray(object.getString("log"));
-                    for (int i = 0; i < array.length(); i++) {
+                    for (int i=0; i<array.length(); i++) {
                         JSONObject logObject = array.getJSONObject(i);
-
                         Ticket ticket = new Ticket();
                         ticket.setName(logObject.getString("name"));
                         ticket.setFacility(logObject.getString("facility"));
@@ -87,8 +89,10 @@ public class TicketsActivity extends AppCompatActivity {
 
                     Toast.makeText(this, "Added", Toast.LENGTH_SHORT).show();
                 }
+                dialog.dismiss();
             } catch (JSONException e) {
                 e.printStackTrace();
+                dialog.dismiss();
             }
         }, Throwable::printStackTrace) {
 
@@ -104,10 +108,7 @@ public class TicketsActivity extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> map = new HashMap<>();
                 map.put("user_id", logPref.getString("user_id", null));
-                map.put("purpose", logPref.getString("purpose", null));
-                if (logPref.getString("facilities", null) != null) {
-                    map.put("facilities", logPref.getString("facilities", null));
-                }
+                map.put("purposes", logPref.getString("purposes_id", null));
                 return map;
             }
         };

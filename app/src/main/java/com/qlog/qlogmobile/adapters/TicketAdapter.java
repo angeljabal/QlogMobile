@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qlog.qlogmobile.R;
+import com.qlog.qlogmobile.model.Purpose;
 import com.qlog.qlogmobile.model.Ticket;
 
 import java.util.List;
@@ -45,7 +46,20 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.ViewHolder
         holder.queueNumberText.setText(String.valueOf(ticket.getQueue_no()));
         holder.facilityText.setText(ticket.getFacility());
         holder.nameText.setText(ticket.getName());
-        holder.purposeText.setText(ticket.getPurpose());
+
+
+        String[] arr = ticket.getPurpose().split(",");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            if (i != arr.length - 1) {
+                stringBuilder.append("\u2022 ").append(arr[i]).append("\n");
+            } else {
+                stringBuilder.append("\u2022 " + arr[i]);
+            }
+        }
+        holder.purposeText.setText(stringBuilder.toString());
+
+
     }
 
     @Override
@@ -65,5 +79,6 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.ViewHolder
             nameText = (TextView) itemView.findViewById(R.id.nameText);
             purposeText = (TextView) itemView.findViewById(R.id.purposeText);
         }
+
     }
 }

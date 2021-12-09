@@ -1,12 +1,27 @@
 package com.qlog.qlogmobile.model;
 
-public class Purpose {
-    private String title;
-    private boolean isSelected;
+import java.util.ArrayList;
 
-    public Purpose(String title, boolean b) {
+public class Purpose {
+    private int id;
+    private String title;
+    private boolean isSelected, hasRequiredFacility;
+    private ArrayList<Facility> facility;
+
+    public Purpose(String title, boolean isSelected) {
         this.title = title;
-        this.isSelected = b;
+        this.isSelected = isSelected;
+    }
+
+    public Purpose() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public boolean isSelected() {
@@ -23,5 +38,21 @@ public class Purpose {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean hasRequiredFacility() {
+        return hasRequiredFacility;
+    }
+
+    public void setHasRequiredFacility(boolean hasRequiredFacility) {
+        this.hasRequiredFacility = hasRequiredFacility;
+    }
+
+    public ArrayList<Facility> getFacility() {
+        return facility;
+    }
+
+    public void setFacility(ArrayList<Facility> facility) {
+        this.facility = facility;
     }
 }

@@ -4,6 +4,34 @@ public class User {
     private int id;
     private String name;
     private String address;
+    private String phone_number;
+    private String type;
+
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", phone_number='" + phone_number + '\'' +
+                '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getAddress() {
         return address;
@@ -21,21 +49,12 @@ public class User {
         this.phone_number = phone_number;
     }
 
-    private String phone_number;
 
-    public int getId() {
-        return id;
+    public String getType() {
+        return type;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setType(String type) {
+        this.type = type;
     }
 }

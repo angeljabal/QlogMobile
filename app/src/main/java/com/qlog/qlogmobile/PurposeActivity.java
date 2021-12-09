@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +33,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.qlog.qlogmobile.adapters.MultiAdapter;
+import com.qlog.qlogmobile.adapters.PurposeAdapter;
 import com.qlog.qlogmobile.adapters.SelectedAdapter;
 import com.qlog.qlogmobile.constants.Constant;
 import com.qlog.qlogmobile.model.Purpose;
@@ -55,7 +56,7 @@ public class PurposeActivity extends AppCompatActivity implements MyInterface {
     private FloatingActionButton done_btn;
     private RecyclerView selected_rv, purposes_rv;
     public SelectedAdapter selectedAdapter;
-    public MultiAdapter multiAdapter;
+    public PurposeAdapter purposeAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,17 +70,14 @@ public class PurposeActivity extends AppCompatActivity implements MyInterface {
         userPref = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
         logPref = this.getApplicationContext().getSharedPreferences("log", Context.MODE_PRIVATE);
         SharedPreferences.Editor logEditor = logPref.edit();
-
         purposes = new ArrayList<>();
         selectedList = new ArrayList<>();
         purposeText = findViewById(R.id.purposeText);
-
         done_btn = findViewById(R.id.done_btn);
-
         purposeDialog = new Dialog(PurposeActivity.this);
         selected_rv = (RecyclerView) findViewById(R.id.selectedPurposesRecyclerView);
 
-        createListofData();
+        loadPurposes();
         purposeText.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -91,19 +89,24 @@ public class PurposeActivity extends AppCompatActivity implements MyInterface {
         done_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StringBuilder stringBuilder = new StringBuilder();
-
+                StringBuilder idSb = new StringBuilder();
+                StringBuilder titleSb = new StringBuilder();
+                StringBuilder hasRequiredSb = new StringBuilder();
                 for(int i=0; i<selectedList.size(); i++){
-                    stringBuilder.append(selectedList.get(i).getTitle());
-
+                    idSb.append(selectedList.get(i).getId());
+                    titleSb.append(selectedList.get(i).getTitle());
+                    hasRequiredSb.append(selectedList.get(i).hasRequiredFacility());
                     if (i != selectedList.size() - 1) {
-                        stringBuilder.append(",");
+                        idSb.append(",");
+                        titleSb.append(",");
+                        hasRequiredSb.append(",");
                     }
                 }
-
-                logEditor.putString("purposes", stringBuilder.toString());
+                logEditor.putString("purposes_id", idSb.toString());
+                logEditor.putString("purposes_title", titleSb.toString());
+                logEditor.putString("purposes_hasRequiredFacility", hasRequiredSb.toString());
                 logEditor.apply();
-                startActivity(new Intent(PurposeActivity.this, FacilityActivity.class));
+                startActivity(new Intent(PurposeActivity.this, ConfirmDataActivity.class));
             }
         });
     }
@@ -114,23 +117,14 @@ public class PurposeActivity extends AppCompatActivity implements MyInterface {
         purposeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         purposeDialog.show();
 
-//        doneBtn = purposeDialog.findViewById(R.id.done_btn);
         EditText editPurpose = purposeDialog.findViewById(R.id.edit_purpose);
         purposes_rv = purposeDialog.findViewById(R.id.purposes_rv);
         LinearLayoutManager purposes_layoutManager = new LinearLayoutManager(PurposeActivity.this);
         purposes_rv.setLayoutManager(purposes_layoutManager);
         purposes_rv.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
 
-        others_btn = purposeDialog.findViewById(R.id.others_btn);
         clear_btn = purposeDialog.findViewById(R.id.clear_btn);
 
-        others_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showOthersDialogInput();
-                purposeDialog.dismiss();
-            }
-        });
 
         clear_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,8 +133,8 @@ public class PurposeActivity extends AppCompatActivity implements MyInterface {
             }
         });
 
-        multiAdapter = new MultiAdapter(purposes, this);
-        purposes_rv.setAdapter(multiAdapter);
+        purposeAdapter = new PurposeAdapter(purposes, this);
+        purposes_rv.setAdapter(purposeAdapter);
 
 
         editPurpose.addTextChangedListener(new TextWatcher() {
@@ -151,7 +145,7 @@ public class PurposeActivity extends AppCompatActivity implements MyInterface {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                multiAdapter.getFilter().filter(charSequence);
+                purposeAdapter.getFilter().filter(charSequence);
             }
 
             @Override
@@ -214,7 +208,7 @@ public class PurposeActivity extends AppCompatActivity implements MyInterface {
         }
     }
 
-    private void createListofData() {
+    private void loadPurposes() {
         //PURPOSES REQUEST
         StringRequest purposesRequest = new StringRequest(Request.Method.GET, Constant.PURPOSES, response -> {
             try {
@@ -223,8 +217,10 @@ public class PurposeActivity extends AppCompatActivity implements MyInterface {
                     JSONArray array = new JSONArray(object.getString("purposes"));
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject purposeObject = array.getJSONObject(i);
-                        Purpose purpose = new Purpose(purposeObject.getString("title"), false);
-
+                        Purpose purpose = new Purpose();
+                        purpose.setId(purposeObject.getInt("id"));
+                        purpose.setTitle(purposeObject.getString("title"));
+                        purpose.setHasRequiredFacility(purposeObject.getInt("hasRequiredFacility")==1?true:false);
                         purposes.add(purpose);
                     }
                 }
@@ -251,7 +247,7 @@ public class PurposeActivity extends AppCompatActivity implements MyInterface {
     @Override
     public void getSelected() {
 
-        selectedList = multiAdapter.getSelected();
+        selectedList = purposeAdapter.getSelected();
 
         selectedAdapter = new SelectedAdapter(selectedList, PurposeActivity.this);
         LinearLayoutManager selected_layoutManager = new LinearLayoutManager(PurposeActivity.this);

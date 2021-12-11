@@ -19,8 +19,6 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.snackbar.Snackbar;
@@ -33,6 +31,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -48,11 +47,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void init() {
-        emailLayout = (TextInputLayout) findViewById(R.id.emailLayout);
-        passwordLayout = (TextInputLayout) findViewById(R.id.passwordLayout);
-        CardView loginButton = (CardView) findViewById(R.id.loginButton);
-        emailField = (TextInputEditText) findViewById(R.id.emailField);
-        passwordField = (TextInputEditText) findViewById(R.id.passwordField);
+        emailLayout = findViewById(R.id.emailLayout);
+        passwordLayout = findViewById(R.id.passwordLayout);
+        CardView loginButton = findViewById(R.id.loginButton);
+        emailField = findViewById(R.id.emailField);
+        passwordField = findViewById(R.id.passwordField);
         dialog = new ProgressDialog(LoginActivity.this);
         dialog.setCancelable(false);
         loginButton.setOnClickListener(view -> {
@@ -92,17 +91,14 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        dialog.dismiss();
-                        Snackbar.make(view, error.toString(), Snackbar.LENGTH_LONG).show();
-                        error.printStackTrace();
-                    }
+                }, error -> {
+                    dialog.dismiss();
+                    Snackbar.make(view, "Login failed. Please try again.", Snackbar.LENGTH_LONG).show();
+                    error.printStackTrace();
                 }) {
                     protected Map<String, String> getParams() throws AuthFailureError {
                         HashMap<String, String> map = new HashMap<>();
-                        map.put("email", emailField.getText().toString().trim());
+                        map.put("email", Objects.requireNonNull(emailField.getText()).toString().trim());
                         map.put("password", passwordField.getText().toString().trim());
                         return map;
                     }

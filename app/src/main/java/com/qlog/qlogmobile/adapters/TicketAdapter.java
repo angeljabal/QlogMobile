@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qlog.qlogmobile.R;
-import com.qlog.qlogmobile.model.Purpose;
 import com.qlog.qlogmobile.model.Ticket;
 
 import java.util.List;
@@ -35,8 +34,7 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.ViewHolder
         View view = inflater.inflate(R.layout.recyclerview_ticket, parent, false);
 
         // Return a new holder instance
-        TicketAdapter.ViewHolder viewHolder = new TicketAdapter.ViewHolder(view);
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -54,7 +52,7 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.ViewHolder
             if (i != arr.length - 1) {
                 stringBuilder.append("\u2022 ").append(arr[i]).append("\n");
             } else {
-                stringBuilder.append("\u2022 " + arr[i]);
+                stringBuilder.append("\u2022 ").append(arr[i]);
             }
         }
         holder.purposeText.setText(stringBuilder.toString());
@@ -67,16 +65,16 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.ViewHolder
         return ticketList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView queueNumberText, facilityText, nameText, purposeText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            queueNumberText = (TextView) itemView.findViewById(R.id.queueNumberText);
-            facilityText = (TextView) itemView.findViewById(R.id.facilityText);
-            nameText = (TextView) itemView.findViewById(R.id.nameText);
+            queueNumberText = itemView.findViewById(R.id.queueNumberText);
+            facilityText = itemView.findViewById(R.id.facilityText);
+            nameText = itemView.findViewById(R.id.nameText);
             purposeText = (TextView) itemView.findViewById(R.id.purposeText);
         }
 

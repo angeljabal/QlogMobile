@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -20,18 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.snackbar.Snackbar;
 import com.qlog.qlogmobile.adapters.MultiAdapter;
-import com.qlog.qlogmobile.adapters.SelectedAdapter;
 import com.qlog.qlogmobile.constants.Constant;
-import com.qlog.qlogmobile.model.Facility;
 import com.qlog.qlogmobile.model.Purpose;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,11 +36,9 @@ import java.util.Map;
 public class ConfirmDataActivity extends AppCompatActivity {
     private SharedPreferences logPref, userPref;
     private SharedPreferences.Editor logEditor;
-    private TextView facilityText, facilityLabel, purposeLabel, purposeText;
     private ProgressDialog dialog;
     private MultiAdapter multiAdapter;
     private ArrayList<Purpose> purposeList;
-    private ArrayList<Facility> facilityList;
     private RecyclerView purposes_rv;
 
     @Override
@@ -63,11 +55,10 @@ public class ConfirmDataActivity extends AppCompatActivity {
         logPref = getApplicationContext().getSharedPreferences("log", Context.MODE_PRIVATE);
         logEditor = logPref.edit();
 
-        TextView nameText = (TextView) findViewById(R.id.nameText);
-        TextView addressText = (TextView) findViewById(R.id.addressText);
-        TextView phoneNumberText = (TextView) findViewById(R.id.phoneNumberText);
-        purposeLabel = (TextView) findViewById(R.id.purposeLabel);
-        Button confirmBtn = (Button) findViewById(R.id.confirm_btn);
+        TextView nameText = findViewById(R.id.nameText);
+        TextView addressText = findViewById(R.id.addressText);
+        TextView phoneNumberText = findViewById(R.id.phoneNumberText);
+        Button confirmBtn = findViewById(R.id.confirm_btn);
         nameText.setText(logPref.getString("name", null));
         addressText.setText(logPref.getString("address", null));
         phoneNumberText.setText(logPref.getString("phone_number", null));
@@ -102,7 +93,7 @@ public class ConfirmDataActivity extends AppCompatActivity {
                 purposeList.add(purpose);
             }
         }
-        purposes_rv = (RecyclerView) findViewById(R.id.purposes_facilities_rv);
+        purposes_rv = findViewById(R.id.purposes_facilities_rv);
         multiAdapter = new MultiAdapter(purposeList, ConfirmDataActivity.this);
         LinearLayoutManager selected_layoutManager = new LinearLayoutManager(ConfirmDataActivity.this);
         purposes_rv.setLayoutManager(selected_layoutManager);
@@ -124,13 +115,10 @@ public class ConfirmDataActivity extends AppCompatActivity {
                 e.printStackTrace();
                 dialog.dismiss();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                dialog.dismiss();
-                Snackbar.make(findViewById(android.R.id.content), error.toString(), Snackbar.LENGTH_LONG).show();
-                error.printStackTrace();
-            }
+        }, error -> {
+            dialog.dismiss();
+            Snackbar.make(findViewById(android.R.id.content), error.toString(), Snackbar.LENGTH_LONG).show();
+            error.printStackTrace();
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -150,93 +138,6 @@ public class ConfirmDataActivity extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(ConfirmDataActivity.this);
         queue.add(request);
-    }
-
-    private void getFacilities() {
-        dialog.show();
-        SharedPreferences.Editor logEditor = logPref.edit();
-        purposeList = new ArrayList<>();
-        facilityList = new ArrayList<>();
-//        multiAdapter = new MultiAdapter(purposeList, ConfirmDataActivity.this);
-
-        StringRequest purposesRequest = new StringRequest(Request.Method.POST, Constant.FACILITIES, response -> {
-            try {
-                JSONObject object = new JSONObject(response);
-                if (object.getBoolean("success")) {
-                    StringBuilder idSb = new StringBuilder();
-                    StringBuilder nameSb = new StringBuilder();
-                    String[] purposeIds = logPref.getString("purposes_id", null).split(",");
-                    JSONArray facilitiesArray = new JSONArray(object.getString("facilities"));
-                    for (int i = 0; i < facilitiesArray.length(); i++) {
-                        JSONObject facilitiesObject = facilitiesArray.getJSONObject(i);
-                        idSb.append(facilitiesObject.getString("id"));
-                        nameSb.append(facilitiesObject.getString("name"));
-
-                        if (i != facilitiesArray.length() - 1) {
-                            nameSb.append(",");
-                            idSb.append(",");
-                        }
-                    }
-
-//                    if(logPref.getString("facilities_id",null)!=null){
-//                        idSb.append(","+logPref.getString("facilities_id",null));
-//                        nameSb.append(","+logPref.getString("facilities_name",null));
-//                    }
-
-                    logEditor.putString("facilities_id", idSb.toString());
-                    logEditor.putString("facilities_name", nameSb.toString());
-                    logEditor.apply();
-
-                    if (logPref.getString("facilities_name", null) == null) {
-                        facilityLabel.setText("");
-                    } else {
-                        facilityText.setText(bulletList(logPref.getString("facilities_name", null)));
-                        if (logPref.getString("facilities_name", null).contains(",")) {
-                            facilityLabel.setText("Facilities:");
-                        }
-                    }
-                }
-                dialog.dismiss();
-            } catch (JSONException e) {
-                e.printStackTrace();
-                dialog.dismiss();
-            }
-        }, error -> {
-            error.printStackTrace();
-            dialog.dismiss();
-        }) {
-            // provide token in header
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                String token = userPref.getString("token", "");
-                HashMap<String, String> map = new HashMap<>();
-                map.put("Authorization", "Bearer " + token);
-                return map;
-            }
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String, String> map = new HashMap<>();
-                map.put("id", logPref.getString("purposes_id", null));
-                return map;
-            }
-        };
-
-        RequestQueue purposeQueue = Volley.newRequestQueue(this);
-        purposeQueue.add(purposesRequest);
-    }
-
-    private String bulletList(String list) {
-        String[] arr = list.split(",");
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < arr.length; i++) {
-            if (i != arr.length - 1) {
-                stringBuilder.append("\u2022 ").append(arr[i]).append("\n");
-            } else {
-                stringBuilder.append("\u2022 " + arr[i]);
-            }
-        }
-        return stringBuilder.toString();
     }
 
     private void setToolBar() {

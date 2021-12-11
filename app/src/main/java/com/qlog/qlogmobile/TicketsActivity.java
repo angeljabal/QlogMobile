@@ -1,38 +1,37 @@
 package com.qlog.qlogmobile;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.anggastudio.printama.Printama;
+import com.qlog.qlogmobile.adapters.TicketAdapter;
 import com.qlog.qlogmobile.constants.Constant;
 import com.qlog.qlogmobile.model.Ticket;
-import com.qlog.qlogmobile.adapters.TicketAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,9 +45,8 @@ public class TicketsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private SharedPreferences logPref;
     private SharedPreferences.Editor logEditor;
-
-    private FloatingActionButton doneBtn;
-
+    private Button findPrinterBtn, printBtn;
+    private ProgressDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,12 +57,14 @@ public class TicketsActivity extends AppCompatActivity {
 
     private void init() {
         ticketList = new ArrayList<>();
-        recyclerView = (RecyclerView) findViewById(R.id.ticketsRecyclerView);
+        recyclerView = findViewById(R.id.ticketsRecyclerView);
         SharedPreferences userPref = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
 
         logPref = getApplicationContext().getSharedPreferences("log", Context.MODE_PRIVATE);
         logEditor = logPref.edit();
-        ProgressDialog dialog = new ProgressDialog(TicketsActivity.this);
+        findPrinterBtn = findViewById(R.id.find_btn);
+        printBtn = findViewById(R.id.print_btn);
+        dialog = new ProgressDialog(TicketsActivity.this);
         dialog.setMessage("Processing");
         dialog.show();
         StringRequest request = new StringRequest(Request.Method.POST, Constant.ADD_LOG, response -> {
@@ -116,6 +116,51 @@ public class TicketsActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(TicketsActivity.this);
         queue.add(request);
 
+        findPrinterBtn.setOnClickListener(v -> showPrinterList());
+        printBtn.setOnClickListener(view -> {
+            dialog.setMessage("Printing...");
+            dialog.show();
+            printTicket();
+        });
+        getSavedPrinter();
+    }
+
+    private void getSavedPrinter() {
+        BluetoothDevice connectedPrinter = Printama.with(this).getConnectedPrinter();
+        if (connectedPrinter != null) {
+            String text = "Connected to : " + connectedPrinter.getName();
+            findPrinterBtn.setText(text);
+        }
+    }
+
+    private void printTicket() {
+        for(Ticket ticket: ticketList){
+            Printama.with(this).connect(printama -> {
+                printama.printDoubleDashedLine();
+                printama.printTextln("QUEUE NUMBER", Printama.CENTER);
+                printama.printTextlnWideTallBold(String.valueOf(ticket.getQueue_no()), Printama.CENTER);
+                printama.printDashedLine();
+                printama.printTextln("(" + ticket.getFacility() + ")", Printama.CENTER);
+                printama.addNewLine();
+                printama.printTextln("Name: " + ticket.getName(), Printama.LEFT);
+                printama.printTextln("Purpose(s): " + ticket.getPurpose(), Printama.LEFT);
+                printama.printDoubleDashedLine();
+                printama.feedPaper();
+                printama.close();
+            }, this::showToast);
+        }
+        dialog.dismiss();
+    }
+
+    private void showPrinterList() {
+        Printama.showPrinterList(this, R.color.colorBlue, printerName -> {
+            Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
+            String text = "Connected to : " + printerName;
+            if (printerName.contains("failed")) {
+                text = printerName;
+            }
+            findPrinterBtn.setText(text);
+        });
     }
 
 
@@ -123,26 +168,25 @@ public class TicketsActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         ImageButton back = toolbar.findViewById(R.id.back);
         ImageButton doneBtn = toolbar.findViewById(R.id.right_icon);
-        doneBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logEditor.clear();
-                logEditor.apply();
-                finish();
-                startActivity(new Intent(TicketsActivity.this, MainActivity.class));
-            }
+        doneBtn.setOnClickListener(view -> {
+            new AlertDialog.Builder(this)
+//                    .setTitle("")
+                    .setMessage("Go back to main menu?")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            logEditor.clear();
+                            logEditor.apply();
+                            finish();
+                            startActivity(new Intent(TicketsActivity.this, MainActivity.class));
+                        }})
+                    .setNegativeButton(android.R.string.no, null).show();
         });
-
-//        print.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                doneBtn.setVisibility(View.GONE);
-//
-////                takeScreenShot();
-//
-//                doneBtn.setVisibility(View.VISIBLE);
-//            }
-//        });
         back.setOnClickListener(v -> onBackPressed());
     }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
 }

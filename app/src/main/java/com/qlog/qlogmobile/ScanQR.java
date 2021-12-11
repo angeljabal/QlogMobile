@@ -104,9 +104,7 @@ public class ScanQR extends AppCompatActivity implements View.OnClickListener {
     }
 
     private boolean onMenuItemClick(MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.queue) {
-//            showAddStudentDialog();
-        } else if (menuItem.getItemId() == R.id.logout) {
+        if (menuItem.getItemId() == R.id.logout) {
             logout();
         }
         return true;
@@ -131,7 +129,7 @@ public class ScanQR extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void loadUsers() {
-        dialog.setMessage("Loading");
+        dialog.setMessage("Processing");
         dialog.show();
         usersList = new ArrayList<>();
         usersDialog = new Dialog(ScanQR.this);

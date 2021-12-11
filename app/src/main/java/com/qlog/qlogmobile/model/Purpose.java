@@ -6,7 +6,6 @@ public class Purpose {
     private int id;
     private String title;
     private boolean isSelected, hasRequiredFacility;
-    private ArrayList<Facility> facility;
 
     public Purpose(String title, boolean isSelected) {
         this.title = title;
@@ -46,13 +45,5 @@ public class Purpose {
 
     public void setHasRequiredFacility(boolean hasRequiredFacility) {
         this.hasRequiredFacility = hasRequiredFacility;
-    }
-
-    public ArrayList<Facility> getFacility() {
-        return facility;
-    }
-
-    public void setFacility(ArrayList<Facility> facility) {
-        this.facility = facility;
     }
 }

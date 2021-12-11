@@ -66,9 +66,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private boolean onMenuItemClick(MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.queue) {
-            
-        } else if (menuItem.getItemId() == R.id.logout) {
+        if (menuItem.getItemId() == R.id.logout) {
             logout();
         }
         return true;

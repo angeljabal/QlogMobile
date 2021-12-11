@@ -7,32 +7,69 @@
     tools:context=".TicketsActivity">
 
 
-        <include
-            android:id="@+id/toolbarMain"
-            layout="@layout/toolbar" />
+    <include
+        android:id="@+id/toolbarMain"
+        layout="@layout/toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/printView"
+        android:orientation="horizontal"
+        android:layout_below="@+id/toolbarMain"
+        android:layout_marginBottom="30sp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ticketsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/toolbarMain"
+            android:padding="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            android:padding="15sp"/>
+            app:layout_constraintVertical_bias="1.0" />
 
-<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--            android:id="@+id/createNewCourse"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:layout_alignParentBottom="true"-->
-<!--            android:layout_gravity="right|bottom"-->
-<!--            android:layout_marginEnd="15dp"-->
-<!--            android:layout_marginBottom="50dp"-->
-<!--            android:src="@drawable/ic_baseline_check_24" />-->
+    </LinearLayout>
 
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+
+
+            <Button
+                android:id="@+id/find_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="0.80"
+                android:background="@drawable/secondary_btn"
+                android:text="Find printer"
+                android:textColor="@android:color/white"
+                android:textSize="10sp"/>
+
+            <Button
+                android:id="@+id/print_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="0.33"
+                android:background="@drawable/secondary_btn"
+                android:text="Print"
+                android:textSize="10sp"
+                android:textColor="@android:color/white"
+                android:paddingStart="10sp"
+                android:drawableLeft="@drawable/ic_baseline_print_24"/>
+        </LinearLayout>
+
+    </RelativeLayout>
 </RelativeLayout>

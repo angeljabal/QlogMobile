@@ -3,21 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.qlog.qlogmobile">
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.QlogMobile"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity
-            android:name=".QueueActivity"
-            android:exported="false" />
         <activity
             android:name=".TicketsActivity"
             android:exported="false" />
@@ -29,9 +29,6 @@
             android:exported="false" />
         <activity
             android:name=".BookAppointment"
-            android:exported="false" />
-        <activity
-            android:name=".TicketActivity"
             android:exported="false" />
         <activity
             android:name=".ConfirmDataActivity"
